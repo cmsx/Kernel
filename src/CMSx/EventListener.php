@@ -2,6 +2,7 @@
 
 namespace CMSx;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -58,11 +59,9 @@ class EventListener implements EventSubscriberInterface
 
     if (is_object($result) && method_exists($result, 'toResponse')) {
       $response = $result->toResponse();
+    } elseif (is_array($result)) {
+      $response = JsonResponse::create($result);
     } else {
-      if (is_array($result)) {
-        $result = json_encode($result);
-      }
-
       $response = Response::create($result);
     }
 
