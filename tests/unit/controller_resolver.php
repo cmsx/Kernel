@@ -36,7 +36,7 @@ class ControllerResolverTest extends PHPUnit_Framework_TestCase
   }
 
   /** @dataProvider dataBadRoutes */
-  function testBadRoutes($url, $exception)
+  function testBadRoutes($url, $exception, $status = null)
   {
     $req = Request::create($url);
 
@@ -48,14 +48,19 @@ class ControllerResolverTest extends PHPUnit_Framework_TestCase
     } catch (\Exception $e) {
       $this->assertInstanceOf($exception, $e, $url . ' Неверный тип исключения');
     }
+
+    if ($status) {
+      /** @var $e \Symfony\Component\HttpKernel\Exception\HttpException */
+      $this->assertEquals($status, $e->getStatusCode(), 'Неверный статус');
+    }
   }
 
   function dataBadRoutes()
   {
     return array(
-      // $url, $exception
-      array('/not_exists/', 'InvalidArgumentException'),
-      array('/bad/', 'InvalidArgumentException'),
+      // $url, $exception, $status
+      array('/not_exists/', 'Symfony\Component\HttpKernel\Exception\HttpException', 404),
+      array('/bad/', 'Symfony\Component\HttpKernel\Exception\HttpException', 404),
     );
   }
 }

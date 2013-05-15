@@ -45,9 +45,7 @@ class ControllerResolver implements ControllerResolverInterface
     $callable = $this->createController($controller, $action, $request, $url);
 
     if (!is_callable($callable)) {
-      throw new \InvalidArgumentException(
-        sprintf('Метод %sAction в контроллере %sController не найден', $action, $controller)
-      );
+      throw new HttpException(404, sprintf('Метод %sAction в контроллере %sController не найден', $action, $controller));
     }
 
     return $callable;
@@ -66,7 +64,7 @@ class ControllerResolver implements ControllerResolverInterface
     $a = $action . 'Action';
 
     if (!class_exists($c)) {
-      throw new \InvalidArgumentException($c . ' не существует');
+      throw new HttpException(404, $c . ' не существует');
     }
 
     return array(new $c($request, $url), $a);
